@@ -1,11 +1,21 @@
 package com.example.myapplication;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -26,6 +36,30 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         AlarmScheduler.scheduleAlarm(this);
+
+        if (Build.VERSION.SDK_INT >= 32) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_NOTIFICATION_POLICY) == PackageManager.PERMISSION_GRANTED)
+                return;
+            ActivityResultLauncher<String> launcher = registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(), isGranted -> {
+
+                    }
+            );
+            launcher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
+
+        PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+        String packageName = "com.example.myapplication";
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent i = new Intent();
+
+            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                i.setData(Uri.parse("package:" + packageName));
+                startActivity(i);
+            }
+        }
 
         setSupportActionBar(binding.toolbar);
 

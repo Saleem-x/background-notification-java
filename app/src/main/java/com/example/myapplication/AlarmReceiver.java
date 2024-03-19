@@ -69,7 +69,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle("hellooooo")
-                .setContentText("notification varndooo "+ currentTime)
+                .setContentText("notification testing "+ currentTime)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setAutoCancel(true).setContentIntent(pendingIntent)
                 .build();
